@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Love Chat 💖</title>
+<style>
+:root{--mut:#ffd0e6;--me:linear-gradient(135deg,#ff2d75,#c2185b);--them:#ffffff26;box-sizing:border-box}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#2a0620,#6a0f3f 55%,#2a0620);overflow:hidden}
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.h{position:absolute;bottom:-40px;animation:up linear forwards;opacity:.5}
+@keyframes up{to{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+#login,#chat{position:relative;z-index:1}
+#login{height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:min(94vw,380px);background:#ffffff1c;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #ffffff40;border-radius:24px;padding:28px 24px;text-align:center}
+.logo{font-size:2.8rem;animation:beat 1.2s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+h2{margin:.3em 0 .1em}
+.sub{color:var(--mut);font-size:.92rem;margin-bottom:18px}
+input[type=text]{width:100%;padding:13px 16px;border-radius:14px;border:1px solid #ffffff40;background:#00000040;color:#fff;font-size:1rem;margin-bottom:12px;outline:none}
+input::placeholder{color:#ffc2dc99}
+button{cursor:pointer;border:0;font-family:inherit}
+.go{width:100%;padding:13px;border-radius:14px;background:var(--me);color:#fff;font-size:1.05rem;font-weight:600}
+#err{color:#ffd54a;font-size:.88rem;min-height:1.2em;margin-top:10px}
+#chat{display:none;height:100dvh;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#00000040;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.av{width:40px;height:40px;border-radius:50%;background:var(--me);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.hn{flex:1;min-width:0}
+#who{font-weight:600}
+#st{font-size:.8rem;color:var(--mut)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ffb300;margin-right:6px}
+.dot.on{background:#2ecc71}
+#leave{background:#ffffff24;color:#fff;padding:8px 14px;border-radius:20px;font-size:.85rem}
+#msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:78%;padding:10px 14px;border-radius:20px;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.35}
+.m.me{align-self:flex-end;background:var(--me);border-bottom-right-radius:6px}
+.m.th{align-self:flex-start;background:var(--them);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom-left-radius:6px}
+.m small{display:block;font-size:.68rem;opacity:.7;margin-top:3px;text-align:right}
+.m img{display:block;max-width:100%;max-height:300px;border-radius:14px;cursor:pointer}
+.sv{margin-top:6px;background:#00000040;color:#fff;padding:6px 12px;border-radius:14px;font-size:.8rem}
+.sys{align-self:center;color:var(--mut);font-size:.8rem;background:#00000040;padding:5px 12px;border-radius:12px}
+form{display:flex;gap:8px;padding:12px;background:#00000040;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center}
+form input[type=text]{margin:0;border-radius:24px;flex:1}
+.ic{background:#ffffff24;color:#fff;width:44px;height:44px;border-radius:50%;font-size:1.2rem;flex:none}
+.snd{background:var(--me);color:#fff;width:46px;height:46px;border-radius:50%;font-size:1.2rem;flex:none}
+#pip{position:fixed;right:14px;bottom:calc(90px + env(safe-area-inset-bottom,0px));width:100px;height:140px;border-radius:14px;overflow:hidden;border:2px solid #ff2d75;z-index:25;display:none;cursor:pointer;background:#000;box-shadow:0 6px 20px #0008}
+#pip video{width:100%;height:100%;object-fit:cover}
+#pip .lbl{position:absolute;bottom:2px;left:0;right:0;font-size:.62rem;text-align:center;background:#00000080;padding:2px}
+#pipBig{position:fixed;inset:0;z-index:26;display:none;background:#000;align-items:center;justify-content:center}
+#pipBig video{max-width:100%;max-height:100%}
+#pipBig button{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;background:#ffffff33;color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem}
+/* 🟡🟡🟡 NOTIFICATION CODE START (....) */
+#reqPop{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:#000a;padding:20px}
+#reqPop .rc{background:#2a0620;border:1px solid #ffffff40;border-radius:20px;padding:24px;text-align:center;max-width:320px}
+#reqPop .rc .em{font-size:2.4rem}
+#reqPop .rw{display:flex;gap:10px;margin-top:16px}
+#reqPop .rw button{flex:1;padding:11px;border-radius:12px;font-weight:600}
+#reqAllow{background:var(--me);color:#fff}
+#reqDeny{background:#ffffff24;color:#fff}
+/* 🟡🟡🟡 NOTIFICATION CODE END */
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:#000c;color:#fff;padding:9px 16px;border-radius:30px;font-size:.85rem;z-index:50;display:none}
+/* ===== EMOJI TAP ANIMATION (CSS) ===== */
+.m.emo{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:4px 8px;font-size:2.6rem;line-height:1.1;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.m.emo small{font-size:.65rem}
+.m.emo.pop span.e{display:inline-block;animation:emopop .6s ease}
+@keyframes emopop{0%{transform:scale(1)}30%{transform:scale(1.7) rotate(-12deg)}60%{transform:scale(.9) rotate(10deg)}100%{transform:scale(1)}}
+#emoLayer{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.fe{position:absolute;bottom:-60px;will-change:transform,opacity;animation:feUp var(--d,2.4s) ease-out forwards}
+@keyframes feUp{0%{transform:translate(0,0) scale(.4) rotate(0);opacity:0}12%{opacity:1}100%{transform:translate(var(--x,0),-105vh) scale(1.2) rotate(var(--r,30deg));opacity:0}}
+.fe.big{left:50%;top:50%;bottom:auto;font-size:6rem;animation:feBig 1.3s ease-out forwards}
+@keyframes feBig{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}30%{transform:translate(-50%,-50%) scale(1.5);opacity:1}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+#call{position:fixed;inset:0;z-index:30;display:none;background:linear-gradient(160deg,#2a0620,#6a0f3f);flex-direction:column;align-items:center;justify-content:center}
+#rv{width:100%;height:100%;object-fit:cover;background:#000}
+#lv{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top,0px));width:110px;height:150px;object-fit:cover;border-radius:14px;border:2px solid #fff6;background:#000;transform:scaleX(-1)}
+#cinfo{position:absolute;top:30%;text-align:center;font-size:1.3rem;text-shadow:0 2px 8px #000;pointer-events:none}
+#cinfo .big{font-size:4rem;animation:beat 1.2s infinite}
+#cbar{position:absolute;bottom:calc(30px + env(safe-area-inset-bottom,0px));display:flex;gap:18px}
+#cbar button{width:60px;height:60px;border-radius:50%;font-size:1.5rem;background:#ffffff33;color:#fff}
+#cbar #cend{background:#e0223a}
+#cbar button.off{background:#fff;color:#000}
+#lb{position:fixed;inset:0;background:#000d;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#lb img{max-width:94vw;max-height:76vh;border-radius:12px}
+</style>
+</head>
+<body>
+<div id="hearts"></div>
+
+<div id="login">
+  <div class="card">
+    <div class="logo">💖</div>
+    <h2>Love Chat</h2>
+    <div class="sub">Dono log same PIN daalo aur chat shuru karo</div>
+    <input type="text" id="nm" placeholder="Tumhara naam" maxlength="20" autocomplete="off">
+    <input type="text" id="pin" placeholder="Secret PIN (kam se kam 6 akshar)" maxlength="30" autocomplete="off">
+    <button class="go" id="go">Chat kholo 💌</button>
+    <div id="err"></div>
+  </div>
+</div>
+
+<div id="chat">
+  <header>
+    <div class="av" id="av">💞</div>
+    <div class="hn"><div id="who">Dost ka wait...</div><div id="st"><span class="dot" id="dot"></span><span id="stt">Connecting...</span></div></div>
+    <button class="ic" id="acall" title="Voice call" style="width:38px;height:38px">📞</button><button class="ic" id="vcall" title="Video call" style="width:38px;height:38px">🎥</button><button class="ic" id="reqcam" title="Unka camera dekhne ki request bhejo" style="width:38px;height:38px;display:none">👁</button><button class="ic" id="reqscr" title="Unki screen dekhne ki request bhejo" style="width:38px;height:38px;display:none">🖥</button><button id="leave">Leave</button>
+  </header>
+  <div id="msgs"></div>
+  <form id="f">
+    <button type="button" class="ic" id="clip" title="Photo bhejo">📷</button>
+    <input type="file" id="file" accept="image/*" hidden>
+    <input type="text" id="txt" placeholder="Message likho..." autocomplete="off">
+    <button type="submit" class="snd">➤</button>
+  </form>
+</div>
+
+<div id="call">
+  <video id="rv" autoplay playsinline></video>
+  <video id="lv" autoplay playsinline muted></video>
+  <div id="cinfo"><div class="big">💖</div><div id="ctxt">Calling...</div></div>
+  <div id="cbar"><button id="cmic" title="Mic">🎤</button><button id="ccam" title="Camera">📷</button><button id="cend" title="End">📵</button></div>
+</div>
+<div id="pip"><video id="pipv" autoplay playsinline></video><div class="lbl" id="pipl">Camera</div></div>
+<div id="pipBig"><button id="pipClose">✕</button><video id="pipBigV" autoplay playsinline controls></video></div>
+<!-- 🟡🟡🟡 NOTIFICATION CODE START (popup HTML) -->
+<div id="reqPop"><div class="rc"><div class="em" id="reqEm">👁</div><div id="reqText" style="margin:10px 0 4px;font-weight:600"></div><div style="color:var(--mut);font-size:.85rem">Love You 💖, 💖💖.</div>
+<div class="rw"><button id="reqDeny">Hate You</button><button id="reqAllow">Love You💖✅</button></div></div></div>
+<div id="emoLayer"></div>
+<div id="toast"></div>
+<!-- 🟡🟡🟡 NOTIFICATION CODE END -->
+<div id="lb"><img id="lbi" alt=""><button class="go" style="width:auto;padding:10px 26px" id="lbs">⬇ Save</button><button class="sv" id="lbc">Band karo</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let peer=null,conn=null,me='',roomId='',lbUrl='',n=0,isAdmin=false;
+function setAdminUI(){$('reqcam').style.display=isAdmin?'':'none';$('reqscr').style.display=isAdmin?'':'none'}
+
+// floating hearts
+setInterval(()=>{const h=document.createElement('div');h.className='h';h.textContent=['❤','💖','💗','💕'][Math.floor(Math.random()*4)];
+  h.style.left=Math.random()*100+'vw';h.style.fontSize=(14+Math.random()*26)+'px';h.style.animationDuration=(7+Math.random()*7)+'s';
+  $('hearts').appendChild(h);setTimeout(()=>h.remove(),15000)},500);
+
+function sys(t){const d=document.createElement('div');d.className='sys';d.textContent=t;$('msgs').appendChild(d);sc()}
+function sc(){const m=$('msgs');m.scrollTop=m.scrollHeight}
+function status(t,on){$('stt').textContent=t;$('dot').className='dot'+(on?' on':'')}
+function stamp(d){const s=document.createElement('small');s.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});d.appendChild(s)}
+// ===== EMOJI TAP ANIMATION (JS) =====
+const EMO_RE=/^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\u200d|\ufe0f|\u20e3|\s)+$/u;
+function isEmojiOnly(t){t=t.trim();return t.length>0&&t.length<=24&&EMO_RE.test(t)}
+function playEmoji(emoji){
+  const L=$('emoLayer');
+  const big=document.createElement('div');big.className='fe big';big.textContent=emoji;L.appendChild(big);setTimeout(()=>big.remove(),1400);
+  for(let i=0;i<22;i++){
+    const e=document.createElement('div');e.className='fe';e.textContent=emoji;
+    e.style.left=(Math.random()*92)+'vw';e.style.fontSize=(22+Math.random()*34)+'px';
+    e.style.setProperty('--x',((Math.random()-.5)*160)+'px');e.style.setProperty('--r',((Math.random()-.5)*120)+'deg');
+    e.style.setProperty('--d',(1.8+Math.random()*1.8)+'s');e.style.animationDelay=(Math.random()*.5)+'s';
+    L.appendChild(e);setTimeout(()=>e.remove(),4200);
+  }
+}
+function addMsg(text,mine){
+  const d=document.createElement('div');d.className='m '+(mine?'me':'th');
+  if(isEmojiOnly(text)){
+    d.classList.add('emo');
+    const sp=document.createElement('span');sp.className='e';sp.textContent=text;d.appendChild(sp);
+    d.onclick=()=>{
+      d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop');
+      playEmoji(text.trim());                                   // mujhe animation
+      if(conn&&conn.open)conn.send({t:'emo',emoji:text.trim()}); // samne wale ko bhi
+    };
+  }else d.textContent=text;
+  stamp(d);$('msgs').appendChild(d);sc();
+}
+function addImg(src,mine){
+  const d=document.createElement('div');d.className='m '+(mine?'me':'th');
+  const im=document.createElement('img');im.src=src;im.onclick=()=>openLb(src);d.appendChild(im);
+  const b=document.createElement('button');b.className='sv';b.textContent='⬇ Save';b.onclick=()=>saveImg(src);d.appendChild(b);
+  stamp(d);$('msgs').appendChild(d);sc();
+}
+function saveImg(src){const a=document.createElement('a');a.href=src;a.download='love-photo-'+(++n)+'.jpg';document.body.appendChild(a);a.click();a.remove()}
+function openLb(u){lbUrl=u;$('lbi').src=u;$('lb').style.display='flex'}
+$('lbc').onclick=()=>$('lb').style.display='none';
+$('lbs').onclick=()=>saveImg(lbUrl);
+function showChat(){$('login').style.display='none';$('chat').style.display='flex'}
+function setOther(nm){nm=nm||'Dost';otherName=nm;$('who').textContent=nm+' 💗'}
+
+function setup(c){
+  const ready=()=>{conn=c;status('Connected (private)',true);sys('Dost judd gaya ✅');c.send({t:'hi',name:me})};
+  c.open?ready():c.on('open',ready);
+  c.on('data',d=>{
+    if(d.t==='hi')setOther(d.name);
+    else if(d.t==='msg')addMsg(d.text,false);
+    else if(d.t==='img')addImg(d.data,false);
+    else if(d.t==='emo'&&typeof d.emoji==='string'&&isEmojiOnly(d.emoji))playEmoji(d.emoji);  // EMOJI TAP: dusre ne tap kiya
+    else if(d.t==='full'){sys('Ye room already bhara hai (sirf 2 log).');status('Room full',false)}
+    // 🟡🟡🟡 NOTIFICATION CODE START (incoming notifications handler)
+    else if(d.t==='req')showReqPopup(d.kind);
+    else if(d.t==='reqres'){sys(d.ok?'✅ '+otherName+' ne allow kar diya':'❌ '+otherName+' ne mana kar diya')}
+    // 🟡🟡🟡 NOTIFICATION CODE END
+  });
+  c.on('close',()=>{conn=null;status('Dost disconnect ho gaya',false);sys('Dost chala gaya. Wo wapas aaye to wait karo.')});
+}
+function start(){
+  me=$('nm').value.trim();const raw=$('pin').value.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!me){$('err').textContent='Naam likho';return}
+  if(raw.length<6){$('err').textContent='PIN kam se kam 6 akshar/number ka rakho (a-z, 0-9)';return}
+  roomId='lovechat-'+raw;$('err').textContent='';$('go').disabled=true;
+  showChat();status('Connecting...',false);
+  peer=new Peer(roomId);bindCall(peer);bindShareReceive(peer);
+  peer.on('open',()=>{isAdmin=true;setAdminUI();status('PIN ready, dost ka wait...',false);sys('Room bana diya. Dost ko wahi PIN daalne bolo 💌')});
+  peer.on('connection',c=>{
+    if(conn&&conn.open){c.on('open',()=>{c.send({t:'full'});setTimeout(()=>c.close(),400)});return}
+    setup(c);
+  });
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'){
+      peer.destroy();peer=new Peer();bindCall(peer);bindShareReceive(peer);
+      peer.on('open',()=>{status('Room dhoondh raha hai...',false);setup(peer.connect(roomId,{reliable:true}))});
+      peer.on('error',e2=>{status('Connect nahi hua',false);sys(e2.type==='peer-unavailable'?'Room nahi mila. Dost se wahi PIN daalne bolo.':'Error: '+e2.type)});
+    }else{status('Error',false);sys('Error: '+e.type+' (internet check karo)')}
+  });
+}
+// ---------- Voice / Video call ----------
+let localStream=null,curCall=null,otherName='Dost';
+function bindCall(p){p.on('call',async c=>{
+  if(c.metadata&&c.metadata.share)return;
+  if(curCall){c.close();return}
+  const v=!!(c.metadata&&c.metadata.video);
+  if(!confirm(otherName+' '+(v?'video':'voice')+' call kar raha hai. Uthaoge?')){c.close();return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:v})}catch(e){sys('Mic/camera ki permission do.');c.close();return}
+  c.answer(localStream);attach(c,v);
+})}
+async function startCall(v){
+  if(curCall)return;
+  if(!conn||!conn.open){sys('Pehle dost ko connect hone do.');return}
+  if(!navigator.mediaDevices){sys('Call ke liye https link chahiye.');return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:v})}catch(e){sys('Mic/camera ki permission do.');return}
+  attach(peer.call(conn.peer,localStream,{metadata:{video:v}}),v);
+}
+function attach(c,v){
+  curCall=c;$('call').style.display='flex';$('ctxt').textContent=(v?'Video':'Voice')+' call... connect ho raha hai';
+  $('lv').style.display=v?'block':'none';$('ccam').style.display=v?'block':'none';
+  $('lv').srcObject=localStream;$('cmic').className='';$('ccam').className='';
+  c.on('stream',rs=>{const r=$('rv');r.srcObject=rs;r.play().catch(()=>{});
+    if(v){$('cinfo').style.display='none'}else{$('ctxt').textContent='Voice call chal raha hai 💞';$('rv').style.visibility='hidden'}});
+  c.on('close',endCall);c.on('error',endCall);
+}
+function endCall(){
+  try{curCall&&curCall.close()}catch(e){}
+  if(localStream)localStream.getTracks().forEach(t=>t.stop());
+  localStream=null;curCall=null;$('call').style.display='none';$('cinfo').style.display='block';$('rv').style.visibility='visible';$('rv').srcObject=null;$('lv').srcObject=null;
+  sys('Call khatam');
+}
+$('acall').onclick=()=>startCall(false);
+$('vcall').onclick=()=>startCall(true);
+$('cend').onclick=endCall;
+$('cmic').onclick=()=>{if(!localStream)return;const t=localStream.getAudioTracks()[0];if(t){t.enabled=!t.enabled;$('cmic').className=t.enabled?'':'off'}};
+$('ccam').onclick=()=>{if(!localStream)return;const t=localStream.getVideoTracks()[0];if(t){t.enabled=!t.enabled;$('ccam').className=t.enabled?'':'off'}};
+// 🟡🟡🟡 NOTIFICATION CODE START : camera/screen request + allow/deny + toast
+// ---------- Consent-based "view their camera / screen" ----------
+let pendingReq=null,shareStream=null,shareCall=null,viewStream=null;
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',3500)}
+function askPermission(kind){
+  if(!conn||!conn.open){sys('Pehle dost ko connect hone do.');return}
+  conn.send({t:'req',kind});sys((kind==='cam'?'Camera':'Screen')+' dekhne ki request bheji gayi, unke allow karne ka wait karo...');
+}
+function showReqPopup(kind){
+  pendingReq=kind;
+  $('reqEm').textContent=kind==='cam'?'📷':'🖥';
+  $('reqText').textContent=otherName+' Tumko I Love You  '+(kind==='cam'?'Bola ':'Hai')+' 💖.';
+  $('reqPop').style.display='flex';
+}
+$('reqDeny').onclick=()=>{$('reqPop').style.display='none';if(conn&&conn.open)conn.send({t:'reqres',ok:false,kind:pendingReq});pendingReq=null};
+$('reqAllow').onclick=async()=>{
+  const kind=pendingReq;$('reqPop').style.display='none';pendingReq=null;
+  try{
+    shareStream=kind==='cam'?await navigator.mediaDevices.getUserMedia({video:true,audio:false}):await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+  }catch(e){if(conn&&conn.open)conn.send({t:'reqres',ok:false,kind});sys('Permission nahi mili.');return}
+  if(conn&&conn.open)conn.send({t:'reqres',ok:true,kind});
+  shareCall=peer.call(conn.peer,shareStream,{metadata:{share:kind}});
+  shareStream.getVideoTracks()[0].onended=()=>stopSharing();
+  toast('💖 '+(kind==='cam'?'..':'screen')+'💖💖');
+};
+function stopSharing(){if(shareStream){shareStream.getTracks().forEach(t=>t.stop());shareStream=null}if(shareCall){try{shareCall.close()}catch(e){}shareCall=null}toast('...')}
+function bindShareReceive(p){p.on('call',c=>{
+  const m=c.metadata||{};
+  if(m.share){c.answer();c.on('stream',s=>{viewStream=s;$('pipv').srcObject=s;$('pipl').textContent=m.share==='cam'?'Unka camera':'Unki screen';$('pip').style.display='block';toast('💖')});
+    c.on('close',()=>{$('pip').style.display='none';$('pipBig').style.display='none';viewStream=null;toast('💖💖')});
+    return;
+  }
+  // normal voice/video call handled by bindCall's own 'call' listener via separate peer event order
+});}
+$('pip').onclick=()=>{$('pipBigV').srcObject=viewStream;$('pipBig').style.display='flex'};
+$('pipClose').onclick=()=>{$('pipBig').style.display='none'};
+$('reqcam').onclick=()=>askPermission('cam');
+$('reqscr').onclick=()=>askPermission('scr');
+// 🟡🟡🟡 NOTIFICATION CODE END
+
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;/* heuristic only */});
+
+$('go').onclick=start;
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')start()});
+$('f').onsubmit=e=>{
+  e.preventDefault();const t=$('txt').value.trim();if(!t)return;
+  if(!conn||!conn.open){sys('Abhi koi connected nahi hai.');return}
+  conn.send({t:'msg',text:t});addMsg(t,true);$('txt').value='';
+};
+// photo: resize + send
+$('clip').onclick=()=>$('file').click();
+$('file').onchange=e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(!conn||!conn.open){sys('Abhi koi connected nahi hai.');return}
+  const img=new Image(),u=URL.createObjectURL(f);
+  img.onload=()=>{
+    const M=1280,r=Math.min(1,M/Math.max(img.width,img.height)),c=document.createElement('canvas');
+    c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    const data=c.toDataURL('image/jpeg',.82);URL.revokeObjectURL(u);
+    conn.send({t:'img',data});addImg(data,true);
+  };
+  img.onerror=()=>sys('Ye photo khul nahi payi.');
+  img.src=u;
+};
+$('leave').onclick=()=>{try{stopSharing()}catch(e){}try{peer&&peer.destroy()}catch(e){}location.reload()};
+</script>
+</body>
+</html>
